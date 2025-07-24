@@ -149,7 +149,7 @@ func (f *openWritableFile) Patch(props []webdav.Proppatch) ([]webdav.Propstat, e
 	if err != nil {
 		return nil, err
 	}
-	u := f.fileSystem.client.Files.Update(fileID, &file)
+	u := f.fileSystem.client.Files.Update(fileID, &file).SupportsAllDrives(true)
 	u.Fields("appProperties")
 	response, err := u.Do()
 	if err != nil {
