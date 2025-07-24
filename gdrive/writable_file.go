@@ -83,7 +83,7 @@ func (f *openWritableFile) Close() error {
 		Parents: []string{parentID},
 	}
 
-	_, err = fs.client.Files.Create(file).Media(&f.buffer).Do()
+	_, err = fs.client.Files.Create(file).Media(&f.buffer).SupportsAllDrives(true).Do()
 	if err != nil {
 		log.Error(err)
 		return err
