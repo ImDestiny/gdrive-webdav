@@ -49,7 +49,7 @@ func (f *openReadonlyFile) initContent() error {
 		return nil
 	}
 
-	resp, err := f.fs.client.Files.Get(f.file.Id).Download()
+	resp, err := f.fs.client.Files.Get(f.file.Id).SupportsAllDrives(true).Download()
 	if err != nil {
 		log.Error(err)
 		return err
