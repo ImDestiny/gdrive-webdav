@@ -213,10 +213,15 @@ func (fs *fileSystem) getFile0(p string, onlyFolder bool) (*fileAndPath, error) 
 }
 
 func (fs *fileSystem) readdir(file *drive.File) ([]os.FileInfo, error) {
-	q := fs.client.Files.List()
-	query := fmt.Sprintf("'%s' in parents", file.Id)
-	log.Tracef("Query: %v", q)
-	q.Q(query)
+	q := fs.client.Files.List().
+    Corpora("allDrives").
+    SupportsAllDrives(true).
+    IncludeItemsFromAllDrives(true)
+
+query := fmt.Sprintf("'%s' in parents", file.Id)
+q.Q(query)
+q.Fields("files(id, name, mimeType, size, modifiedTime, createdTime, trashed, parents, driveId)")
+log.Tracef("Query: %v", query)
 
 	r, err := q.Do()
 	if err != nil {
