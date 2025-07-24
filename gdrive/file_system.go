@@ -50,7 +50,7 @@ func (fs *fileSystem) Mkdir(_ context.Context, name string, perm os.FileMode) er
 		Parents:  []string{parentID},
 	}
 
-	_, err = fs.client.Files.Create(f).Do()
+	_, err = fs.client.Files.Create(f).SupportsAllDrives(true).Do()
 	if err != nil {
 		return err
 	}
@@ -89,7 +89,7 @@ func (fs *fileSystem) RemoveAll(_ context.Context, name string) error {
 		return err
 	}
 
-	err = fs.client.Files.Delete(id).Do()
+	err = fs.client.Files.Delete(id).SupportsAllDrives(true).Do()
 	if err != nil {
 		log.Errorf("can't delete file %v", err)
 		return err
@@ -126,7 +126,7 @@ func (fs *fileSystem) Rename(_ context.Context, oldName, newName string) error {
 	file := drive.File{}
 	file.Name = path.Base(newName)
 	log.Tracef("Files.Update %v %v", fileAndPath.path, file)
-	u := fs.client.Files.Update(fileAndPath.file.Id, &file)
+	u := fs.client.Files.Update(fileAndPath.file.Id, &file).SupportsAllDrives(true)
 	_, err = u.Do()
 	if err != nil {
 		log.Error(err)
