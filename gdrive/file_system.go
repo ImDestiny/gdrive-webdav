@@ -186,13 +186,17 @@ func (fs *fileSystem) getFile0(p string, onlyFolder bool) (*fileAndPath, error) 
 		return nil, err
 	}
 
-	q := fs.client.Files.List()
-	query := fmt.Sprintf("'%s' in parents and name='%s'", parentID, base)
-	if onlyFolder {
-		query += " and mimeType='" + mimeTypeFolder + "'"
-	}
-	q.Q(query)
-	q.Fields("files(id, name, appProperties, mimeType, size, modifiedTime, createdTime)")
+	q := fs.client.Files.List().
+    Corpora("allDrives").
+    SupportsAllDrives(true).
+    IncludeItemsFromAllDrives(true)
+
+query := fmt.Sprintf("'%s' in parents and name='%s'", parentID, base)
+if onlyFolder {
+    query += " and mimeType='" + mimeTypeFolder + "'"
+}
+q.Q(query)
+q.Fields("files(id, name, appProperties, mimeType, size, modifiedTime, createdTime, trashed, parents, driveId)")
 	log.Tracef("Query: %v", q)
 
 	r, err := q.Do()
